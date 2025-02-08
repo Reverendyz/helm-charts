@@ -11,6 +11,8 @@ spec:
       labels:
         app: {{ .Values.name }}
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
         - name: {{ .Values.name }}
           image: "{{ .Values.image.repository }}"
