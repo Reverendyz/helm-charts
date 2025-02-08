@@ -33,6 +33,6 @@ spec:
           {{- end }}
           env:
             - name: HOST
-              value: {{ .Values.env.host }}
+              value: "{{ .Values.env.host }}"
             - name: PORT
-              value: {{ .Values.env.port }}
+              value: "{{ .Values.env.port }}"
