@@ -12,7 +12,9 @@ spec:
         app: {{ .Values.name }}
     spec:
       imagePullSecrets:
-        - name: dockerhub-secret
+        {{- range .Values.imagePullSecrets -}}
+        - name: {{ . | quote }}
+        {{ end }}
       containers:
         - name: {{ .Values.name }}
           image: "{{ .Values.image.repository }}"
