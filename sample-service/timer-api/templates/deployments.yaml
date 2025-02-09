@@ -12,7 +12,7 @@ spec:
         app: {{ .Values.name }}
     spec:
       imagePullSecrets:
-        {{- range .Values.imagePullSecrets -}}
+        {{- range .Values.imagePullSecrets }}
         - {{ . | quote }}
         {{ end }}
       containers:
