@@ -27,6 +27,7 @@ service:
   port: 80
   protocol: TCP
   targetPort: 8080
+  nodePort: 30080
 
 ingress:
   enabled: false
