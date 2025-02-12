@@ -5,7 +5,7 @@ name: timer-api
 image:
   repository: reverendyz/timer-api
   pullPolicy: IfNotPresent
-  tag: "latest"
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
