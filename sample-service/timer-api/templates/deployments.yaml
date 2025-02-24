@@ -2,11 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 spec:
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.name }}
-  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -15,27 +16,50 @@ spec:
       imagePullSecrets:
         {{- range .Values.imagePullSecrets }}
         - name: {{ . | quote }}
-        {{ end }}
+        {{- end }}
       containers:
         - name: {{ .Values.name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
           ports:
             - containerPort: {{ .Values.service.port }}
-          {{- with .Values.resources }}
+          {{- if .Values.resources }}
           resources:
-            {{- with .limits }}
+            {{- if .Values.resources.limits }}
             limits:
-              cpu: "{{ .cpu }}"
-              memory: "{{ .memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+              memory: "{{ .Values.resources.limits.memory }}"
             {{- end }}
-            {{- with .requests }}
+            {{- if .Values.resources.requests }}
             requests:
-              cpu: "{{ .cpu }}"
-              memory: "{{ .memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+              memory: "{{ .Values.resources.requests.memory }}"
             {{- end }}
           {{- end }}
           env:
-            - name: HOST
-              value: "{{ .Values.env.host }}"
-            - name: PORT
-              value: "{{ .Values.env.port }}"
+            {{- range .Values.env }}
+              - name: {{ .name }}
+                value: {{ .value }}
+            {{- end }}
+            {{- range .Values.secretEnv }}
+            - name: {{ .envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName | quote }}
+                  key: {{ .key | quote }}
+            {{- end }}
+          volumeMounts:
+            {{- range .Values.secrets }}
+            - name: {{ .volumeName }}
+              mountPath: /etc/secrets/{{ .fileName }}
+              subPath: {{ .fileName }}
+              readOnly: true
+            {{- end }}
+      volumes:
+        {{- range .Values.secrets }}
+        - name: {{ .volumeName }}
+          secret:
+            secretName: {{ .secretName | quote }}
+            items:
+              - key: {{ .key | quote }}
+                path: {{ .fileName | quote }}
+        {{- end }}
