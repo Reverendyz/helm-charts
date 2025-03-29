@@ -1,0 +1,11 @@
+apiVersion: v2
+name: observability
+description: Observability stack (Grafana, Prometheus, Loki)
+version: 0.1.0
+dependencies:
+  - name: kube-prometheus-stack
+    version: "70.3.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
+  - name: loki-stack
+    version: "2.10.2"
+    repository: "https://grafana.github.io/helm-charts"
